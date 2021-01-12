@@ -40,23 +40,14 @@ void ISSnoopDevice(XMLEle *root)
     mydriver->ISSnoopDevice(root);
 }
 
-double MAX_MAG = sqrt(pow(32768, 2) * 2);
-
-double scaleMagnitude(double mag)
-{
-    return mag / MAX_MAG;
-}
-
 GamePad::GamePad()
 {
-    // We must be named Joystick or other devices won't snoop properly.
-    setDeviceName("Joystick");
     setVersion(CDRIVER_VERSION_MAJOR, CDRIVER_VERSION_MINOR);
 }
 
 const char *GamePad::getDefaultName()
 {
-    return "Joystick";
+    return "GamePad";
 }
 
 bool GamePad::initProperties()
