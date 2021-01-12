@@ -254,9 +254,16 @@ void GamePad::TimerHit()
 
     for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; i++)
     {
-        int val = SDL_GameControllerGetAxis(gamepad, (SDL_GameControllerAxis)i);
+        SDL_GameControllerAxis axis = (SDL_GameControllerAxis)i;
 
-        if (abs(val) < 200)
+        int val = SDL_GameControllerGetAxis(gamepad, axis);
+
+        if (axis == SDL_CONTROLLER_AXIS_LEFTY || axis == SDL_CONTROLLER_AXIS_RIGHTY)
+        {
+            val = -val;
+        }
+
+        if (abs(val) < 256)
         {
             val = 0;
         }
