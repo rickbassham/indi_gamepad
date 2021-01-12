@@ -1,7 +1,7 @@
 #pragma once
 
-#include <libindi/defaultdevice.h>
-#include <SDL2/SDL_gamecontroller.h>
+#include "defaultdevice.h"
+#include "SDL_gamecontroller.h"
 
 class GamePad : public INDI::DefaultDevice
 {
@@ -14,7 +14,7 @@ public:
     virtual bool initProperties() override;
     virtual bool updateProperties() override;
 
-    virtual void ISGetProperties(const char *dev);
+    virtual void ISGetProperties(const char *dev) override;
     virtual bool ISNewSwitch(const char *dev, const char *name, ISState *states, char *names[],
                              int n) override;
 
@@ -55,6 +55,6 @@ private:
     INumber AxisN[SDL_CONTROLLER_AXIS_MAX];
     INumberVectorProperty AxisNP;
 
-    ISwitch ButtonS[SDL_CONTROLLER_BUTTON_MAX];
+    ISwitch ButtonS[15];
     ISwitchVectorProperty ButtonSP;
 };

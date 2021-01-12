@@ -1,8 +1,8 @@
 #include <cstring>
 #include <termios.h>
 
-#include <libindi/indicom.h>
-#include <SDL2/SDL.h>
+#include "indicom.h"
+#include "SDL.h"
 
 #include "config.h"
 #include "indi_gamepad.h"
@@ -49,6 +49,8 @@ double scaleMagnitude(double mag)
 
 GamePad::GamePad()
 {
+    // We must be named Joystick or other devices won't snoop properly.
+    setDeviceName("Joystick");
     setVersion(CDRIVER_VERSION_MAJOR, CDRIVER_VERSION_MINOR);
 }
 
@@ -105,7 +107,7 @@ bool GamePad::initProperties()
     IUFillSwitch(&ButtonS[SDL_CONTROLLER_BUTTON_DPAD_LEFT], "BUTTON_14", "DPad Left", ISS_OFF);
     IUFillSwitch(&ButtonS[SDL_CONTROLLER_BUTTON_DPAD_RIGHT], "BUTTON_15", "DPad Right", ISS_OFF);
 
-    IUFillSwitchVector(&ButtonSP, ButtonS, SDL_CONTROLLER_BUTTON_MAX, getDeviceName(), "JOYSTICK_BUTTONS", "Buttons", MAIN_CONTROL_TAB, IP_RO, ISR_NOFMANY, 0, IPS_IDLE);
+    IUFillSwitchVector(&ButtonSP, ButtonS, 15, getDeviceName(), "JOYSTICK_BUTTONS", "Buttons", MAIN_CONTROL_TAB, IP_RO, ISR_NOFMANY, 0, IPS_IDLE);
 
     refreshGamepadList();
 
@@ -254,7 +256,7 @@ void GamePad::TimerHit()
     {
         int val = SDL_GameControllerGetAxis(gamepad, (SDL_GameControllerAxis)i);
 
-        if (abs(val) < 100)
+        if (abs(val) < 200)
         {
             val = 0;
         }
@@ -280,7 +282,7 @@ void GamePad::TimerHit()
         IDSetNumber(&JoystickRightNP, nullptr);
     }
 
-    for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
+    for (int i = 0; i < 15; i++)
     {
         ISState val = SDL_GameControllerGetButton(gamepad, (SDL_GameControllerButton)i) == 1 ? ISS_ON : ISS_OFF;
 
