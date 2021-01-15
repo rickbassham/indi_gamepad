@@ -1,5 +1,7 @@
 # Cross platform INDI driver for gamepads
 
+Requires a build of indi that allows you to choose the joystick device.
+
 ## Linux (Debian or Ubuntu)
 
 ```sh
@@ -8,7 +10,7 @@ sudo apt install libsdl2-dev
 
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ../
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
 make
 sudo make install
 
@@ -22,7 +24,7 @@ brew install sdl2
 
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug ../
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
 make
 sudo make install
 

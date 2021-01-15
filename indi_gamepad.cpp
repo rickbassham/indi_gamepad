@@ -118,7 +118,7 @@ bool GamePad::updateProperties()
 {
     INDI::DefaultDevice::updateProperties();
 
-    if (isConnected())
+    if (INDI::BaseDevice::isConnected())
     {
         defineNumber(&JoystickLeftNP);
         defineNumber(&JoystickRightNP);
@@ -226,7 +226,7 @@ bool GamePad::Disconnect()
 
 void GamePad::TimerHit()
 {
-    if (!isConnected())
+    if (!INDI::BaseDevice::isConnected())
         return;
 
     if (SDL_GameControllerGetAttached(gamepad) == SDL_FALSE)
@@ -321,32 +321,35 @@ void GamePad::refreshGamepadList()
         }
     }
 
-    char propName[16] = {0};
-    GamePadS = new ISwitch[joystickIndexes.size()];
-
-    for (size_t i = 0; i < joystickIndexes.size(); i++)
+    if (joystickIndexes.size() > 0)
     {
-        snprintf(propName, 16, "GAMEPAD_%ld", i);
+        char propName[16] = {0};
+        GamePadS = new ISwitch[joystickIndexes.size()];
 
-        IUFillSwitch(
-            &GamePadS[i],
-            propName,
-            SDL_GameControllerNameForIndex(joystickIndexes[i]),
-            ISS_OFF);
+        for (size_t i = 0; i < joystickIndexes.size(); i++)
+        {
+            snprintf(propName, 16, "GAMEPAD_%ld", i);
+
+            IUFillSwitch(
+                &GamePadS[i],
+                propName,
+                SDL_GameControllerNameForIndex(joystickIndexes[i]),
+                ISS_OFF);
+        }
+
+        IUFillSwitchVector(
+            &GamePadsSP,
+            GamePadS,
+            joystickIndexes.size(),
+            getDeviceName(),
+            "GAMEPADS",
+            "GamePads",
+            MAIN_CONTROL_TAB,
+            IP_RW,
+            ISR_1OFMANY,
+            60,
+            IPS_IDLE);
+
+        defineSwitch(&GamePadsSP);
     }
-
-    IUFillSwitchVector(
-        &GamePadsSP,
-        GamePadS,
-        joystickIndexes.size(),
-        getDeviceName(),
-        "GAMEPADS",
-        "GamePads",
-        MAIN_CONTROL_TAB,
-        IP_RW,
-        ISR_1OFMANY,
-        60,
-        IPS_IDLE);
-
-    defineSwitch(&GamePadsSP);
 }
