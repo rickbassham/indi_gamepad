@@ -28,12 +28,14 @@ protected:
 
 private:
     void refreshGamepadList();
+    double calcAngle(SDL_GameControllerAxis yAxis, SDL_GameControllerAxis xAxis);
+    double calcMagnitude(SDL_GameControllerAxis yAxis, SDL_GameControllerAxis xAxis);
 
     SDL_GameController *gamepad = nullptr;
 
     std::vector<int> joystickIndexes;
 
-    ISwitch RefreshS[1];
+    ISwitch RefreshS[1]{};
     ISwitchVectorProperty RefreshSP;
 
     ISwitch *GamePadS = nullptr;
@@ -46,15 +48,15 @@ private:
         JOYSTICK_N,
     };
 
-    INumber JoystickLeftN[JOYSTICK_N];
+    INumber JoystickLeftN[JOYSTICK_N]{};
     INumberVectorProperty JoystickLeftNP;
 
-    INumber JoystickRightN[JOYSTICK_N];
+    INumber JoystickRightN[JOYSTICK_N]{};
     INumberVectorProperty JoystickRightNP;
 
-    INumber AxisN[SDL_CONTROLLER_AXIS_MAX];
+    INumber AxisN[SDL_CONTROLLER_AXIS_MAX]{};
     INumberVectorProperty AxisNP;
 
-    ISwitch ButtonS[15];
+    ISwitch ButtonS[15]{};
     ISwitchVectorProperty ButtonSP;
 };

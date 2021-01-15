@@ -224,6 +224,16 @@ bool GamePad::Disconnect()
     return true;
 }
 
+double GamePad::calcAngle(SDL_GameControllerAxis yAxis, SDL_GameControllerAxis xAxis)
+{
+    return range360(atan2(AxisN[yAxis].value, AxisN[xAxis].value) * (180.0 / M_PI));
+}
+
+double GamePad::calcMagnitude(SDL_GameControllerAxis yAxis, SDL_GameControllerAxis xAxis)
+{
+    return std::min(sqrt(pow(AxisN[yAxis].value, 2) + pow(AxisN[xAxis].value, 2)) / 32767.0, 1.0);
+}
+
 void GamePad::TimerHit()
 {
     if (!INDI::BaseDevice::isConnected())
@@ -254,7 +264,8 @@ void GamePad::TimerHit()
             val = -val;
         }
 
-        if (abs(val) < 256)
+        // Hard-coded dead zone.
+        if (abs(val) < 1024)
         {
             val = 0;
         }
@@ -267,11 +278,11 @@ void GamePad::TimerHit()
         AxisN[i].value = val;
     }
 
-    JoystickLeftN[JOYSTICK_ANGLE].value = range360(atan2(AxisN[SDL_CONTROLLER_AXIS_LEFTY].value, AxisN[SDL_CONTROLLER_AXIS_LEFTX].value) * (180.0 / M_PI));
-    JoystickRightN[JOYSTICK_ANGLE].value = range360(atan2(AxisN[SDL_CONTROLLER_AXIS_RIGHTY].value, AxisN[SDL_CONTROLLER_AXIS_RIGHTX].value) * (180.0 / M_PI));
+    JoystickLeftN[JOYSTICK_ANGLE].value = calcAngle(SDL_CONTROLLER_AXIS_LEFTY, SDL_CONTROLLER_AXIS_LEFTX);
+    JoystickRightN[JOYSTICK_ANGLE].value = calcAngle(SDL_CONTROLLER_AXIS_RIGHTY, SDL_CONTROLLER_AXIS_RIGHTX);
 
-    JoystickLeftN[JOYSTICK_MAGNITUDE].value = std::min(sqrt(pow(AxisN[SDL_CONTROLLER_AXIS_LEFTY].value, 2) + pow(AxisN[SDL_CONTROLLER_AXIS_LEFTX].value, 2)) / 32767.0, 1.0);
-    JoystickRightN[JOYSTICK_MAGNITUDE].value = std::min(sqrt(pow(AxisN[SDL_CONTROLLER_AXIS_RIGHTY].value, 2) + pow(AxisN[SDL_CONTROLLER_AXIS_RIGHTX].value, 2)) / 32767.0, 1.0);
+    JoystickLeftN[JOYSTICK_MAGNITUDE].value = calcMagnitude(SDL_CONTROLLER_AXIS_LEFTY, SDL_CONTROLLER_AXIS_LEFTX);
+    JoystickRightN[JOYSTICK_MAGNITUDE].value = calcMagnitude(SDL_CONTROLLER_AXIS_RIGHTY, SDL_CONTROLLER_AXIS_RIGHTX);
 
     if (axisChanged)
     {
