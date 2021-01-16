@@ -33,6 +33,3 @@ cp /usr/local/share/indi/indi_gamepad.xml /Applications/KStars.app/Contents/Reso
 
 indiserver -p 7625 indi_gamepad
 ```
-
-You'll need to connect remote to it, since KStars seems to be filtering out any
-Joysticks on Mac.
