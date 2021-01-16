@@ -8,7 +8,7 @@ include(GNUInstallDirs)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/")
 
 # find our required packages
-find_package(INDI 1.8 REQUIRED)
+find_package(INDI 1.8.9 REQUIRED)
 find_package(Nova REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(GSL REQUIRED)
