@@ -13,8 +13,6 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
 make
 sudo make install
-
-indiserver indi_gamepad
 ```
 
 ## OSX
@@ -27,9 +25,4 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
 make
 sudo make install
-
-cp /usr/local/bin/indi_gamepad /Applications/KStars.app/Contents/MacOS/indi
-cp /usr/local/share/indi/indi_gamepad.xml /Applications/KStars.app/Contents/Resources/DriverSupport
-
-indiserver -p 7625 indi_gamepad
 ```

@@ -1,6 +1,13 @@
-# define the project name
-project(indi-gamepad C CXX)
-cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
+
+project(
+    indi_gamepad
+    VERSION 1.2.0
+    DESCRIPTION "INDI Driver for GamePads"
+    HOMEPAGE_URL "https://github.com/rickbassham/indi_gamepad"
+    LANGUAGES C CXX
+)
 
 include(GNUInstallDirs)
 
@@ -8,15 +15,13 @@ include(GNUInstallDirs)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/")
 
 # find our required packages
-find_package(INDI 1.8.9 REQUIRED)
-find_package(Nova REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(GSL REQUIRED)
+find_package(INDI REQUIRED)
 find_package(SDL2 REQUIRED)
 
 # these will be used to set the version number in config.h and our driver's xml file
-set(CDRIVER_VERSION_MAJOR 1)
-set(CDRIVER_VERSION_MINOR 2)
+set(CDRIVER_VERSION_MAJOR ${CMAKE_PROJECT_VERSION_MAJOR})
+set(CDRIVER_VERSION_MINOR ${CMAKE_PROJECT_VERSION_MINOR})
+set(CDRIVER_VERSION_PATCH ${CMAKE_PROJECT_VERSION_PATCH})
 
 # do the replacement in the config.h
 configure_file(
@@ -34,8 +39,6 @@ configure_file(
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 include_directories( ${INDI_INCLUDE_DIR} )
-include_directories( ${NOVA_INCLUDE_DIR} )
-include_directories( ${EV_INCLUDE_DIR} )
 include_directories( ${SDL2_INCLUDE_DIR} )
 
 include(CMakeCommon)
@@ -50,17 +53,61 @@ add_executable(
 target_link_libraries(
     indi_gamepad
     ${INDI_LIBRARIES}
-    ${NOVA_LIBRARIES}
-    ${GSL_LIBRARIES}
     ${SDL2_LIBRARY}
 )
 
-# tell cmake where to install our executable
+if(APPLE)
+    install(
+        TARGETS indi_gamepad RUNTIME DESTINATION "/Applications/KStars.app/Contents/MacOS/indi"
+    )
+
+    install(
+        FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/indi_gamepad.xml
+        DESTINATION "/Applications/KStars.app/Contents/Resources/DriverSupport"
+    )
+endif(APPLE)
+
 install(TARGETS indi_gamepad RUNTIME DESTINATION bin)
 
-# and where to put the driver's xml file.
 install(
     FILES
     ${CMAKE_CURRENT_BINARY_DIR}/indi_gamepad.xml
     DESTINATION ${INDI_DATA_DIR}
 )
+
+if(UNIX AND NOT APPLE)
+    execute_process(
+        COMMAND bash -c "cat /etc/*release | grep ^ID= | awk -F= '{printf \"%s\",\$2}'"
+        OUTPUT_VARIABLE DISTRIB_ID
+    )
+    execute_process(
+        COMMAND bash -c "cat /etc/*release | grep ^VERSION_CODENAME= | awk -F= '{printf \"%s\",\$2}'"
+        OUTPUT_VARIABLE DISTRIB_CODENAME
+    )
+    execute_process(
+        COMMAND bash -c "dpkg-architecture -q DEB_BUILD_ARCH | awk '{printf \"%s\",\$1}'"
+        OUTPUT_VARIABLE DISTRIB_ARCH
+    )
+    set(CPACK_PACKAGE_CONTACT "Rick Bassham brodrick.bassham@gmail.com")
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CMAKE_PROJECT_HOMEPAGE_URL})
+    set(CPACK_RPM_PACKAGE_GROUP "Applications/Engineering")
+    set(CPACK_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${DISTRIB_ID}_${DISTRIB_CODENAME}_${DISTRIB_ARCH})
+
+endif(UNIX AND NOT APPLE)
+
+set(CPACK_SOURCE_GENERATOR "TGZ")
+
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".DS_Store")
+list(APPEND CPACK_SOURCE_IGNORE_FILES ".gitignore")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "/build/")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "/.git/")
+list(APPEND CPACK_SOURCE_IGNORE_FILES "/.vscode/")
+
+set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION})
+
+include(CPack)
