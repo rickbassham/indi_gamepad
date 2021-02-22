@@ -9,6 +9,10 @@ jobs:
   build-mac:
     runs-on: macos-latest
     steps:
+      - name: Install build deps
+        run: |
+          brew install sdl2 cfitsio libnova gsl zlib libusb jpeg libtiff fftw
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -22,10 +26,6 @@ jobs:
           cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=RelWithDebInfo ../indi
           make
           sudo make install
-
-      - name: Install SDL2
-        run: |
-          brew install sdl2
 
       - name: Checkout
         uses: actions/checkout@v2
