@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        path: 'indi'
-        repository: 'indilib/indi'
+        with:
+          path: 'indi'
+          repository: 'indilib/indi'
 
       - name: Build indi
         run: |
@@ -28,7 +29,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-        path: 'indi_gamepad'
+        with:
+          path: 'indi_gamepad'
 
       - name: Build indi_gamepad
         run: |
