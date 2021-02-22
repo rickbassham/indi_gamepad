@@ -56,7 +56,7 @@ target_link_libraries(
     ${SDL2_LIBRARY}
 )
 
-if(APPLE)
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     install(
         TARGETS indi_gamepad RUNTIME DESTINATION "/Applications/KStars.app/Contents/MacOS/indi"
     )
@@ -66,10 +66,16 @@ if(APPLE)
         ${CMAKE_CURRENT_BINARY_DIR}/indi_gamepad.xml
         DESTINATION "/Applications/KStars.app/Contents/Resources/DriverSupport"
     )
-endif(APPLE)
 
+endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+# tell cmake where to install our executable
 install(TARGETS indi_gamepad RUNTIME DESTINATION bin)
 
+# and where to put the driver's xml file.
 install(
     FILES
     ${CMAKE_CURRENT_BINARY_DIR}/indi_gamepad.xml
@@ -111,3 +117,5 @@ set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
 set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION})
 
 include(CPack)
+
+endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
