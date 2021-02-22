@@ -38,3 +38,9 @@ jobs:
           cd build_indi_gamepad
           cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=RelWithDebInfo ../indi_gamepad
           make
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mac-artifact
+          path: |
+            build_indi_gamepad/indi_gamepad
+            build_indi_gamepad/indi_gamepad.xml
